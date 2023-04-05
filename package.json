@@ -1,0 +1,12 @@
+{
+  "name": "genesys-cloud-code-snippets",
+  "version": "1.0.0",
+  "description": "Repository with code snippets that call the Genesys Cloud API",
+  "main": "main.js",
+  "author": "Juan F. Abello",
+  "license": "MIT",
+  "dependencies": {
+    "@jfabello/logtoconsole": "github:jfabello/log-to-console",
+    "purecloud-platform-client-v2": ">=140"
+  }
+}
