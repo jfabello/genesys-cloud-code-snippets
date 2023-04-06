@@ -12,7 +12,7 @@ To use the code snippets you need the following:
 
 - A recent version of Node.js installed.
 - A Genesys Cloud CX organization.
-- OAuth client credentials to access your Genesys Cloud CX organization with enough priviledges.
+- OAuth client credentials to access your Genesys Cloud CX organization with enough privileges.
 
 ### Clone the repository on your local computer
 
