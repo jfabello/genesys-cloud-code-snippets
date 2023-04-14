@@ -101,8 +101,8 @@ async function queryBotAggregates() {
 			if ("metrics" in data === false) continue;
 			for (const metric of data.metrics) {
 				if ("stats" in metric === false) continue;
-				if ("count" in metric.stats === false) continue;
-				conversation.set(result.group.botIntent, conversation.get(result.group.botIntent) + metric.stats.count);
+				if ("sum" in metric.stats === false) continue;
+				conversation.set(result.group.botIntent, conversation.get(result.group.botIntent) + metric.stats.sum);
 			}
 		}
 	}
@@ -110,8 +110,8 @@ async function queryBotAggregates() {
 	for (const [conversationId, conversationIntents] of conversationsBotAggregates) {
 		console.log(`Conversation ID: ${conversationId}`);
 		const intentsArray = [];
-		for (const [intent, count] of conversationIntents) {
-			intentsArray.push({ intent, count });
+		for (const [intent, sum] of conversationIntents) {
+			intentsArray.push({ intent, sum: sum });
 		}
 		console.table(intentsArray);
 		console.log();
