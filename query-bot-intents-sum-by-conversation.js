@@ -5,7 +5,7 @@ const logToConsole = require("@jfabello/logtoconsole").getInstance(4);
 const gcPlatformClient = require("purecloud-platform-client-v2");
 
 // Change this constants to modify the query
-const QUERY_START_DATE_ISO_STRING = new Date(Date.now() - constants.DAY_IN_MS * 60).toISOString(); // 30 days ago
+const QUERY_START_DATE_ISO_STRING = new Date(Date.now() - constants.DAY_IN_MS * 7).toISOString(); // 7 days ago
 const QUERY_END_DATE_ISO_STRING = new Date().toISOString(); // Right now
 const QUERY_TIME_ZONE = "America/Bogota";
 
@@ -45,51 +45,38 @@ async function queryBotAggregates() {
 	// Create API instances
 	const analyticsApi = new gcPlatformClient.AnalyticsApi();
 
-	let queryBotAggregatesBody = {
+	const botAggregatesQueryBody = {
 		interval: QUERY_START_DATE_ISO_STRING + "/" + QUERY_END_DATE_ISO_STRING,
 		timeZone: QUERY_TIME_ZONE,
 		metrics: ["oBotIntent"],
-		groupBy: ["conversationId", "botIntent"],
-		filter: {
-			type: "and",
-			predicates: [
-				{
-					dimension: "botProvider",
-					value: "GOOGLE"
-				},
-				{
-					dimension: "mediaType",
-					value: "MESSAGING"
-				}
-			]
-		}
+		groupBy: ["conversationId", "botIntent"]
 	};
 
-	let queryBotAggregatesResults = {};
+	let botAggregatesQueryResults = {};
 
 	try {
-		queryBotAggregatesResults = await analyticsApi.postAnalyticsBotsAggregatesQuery(queryBotAggregatesBody);
+		botAggregatesQueryResults = await analyticsApi.postAnalyticsBotsAggregatesQuery(botAggregatesQueryBody);
 	} catch (gcError) {
 		logToConsole.error("An error occurred while querying the bot aggreggates.");
 		logToConsole.debug("Genesys Cloud returned error object:\n%O", gcError);
 	}
 
-	if ("results" in queryBotAggregatesResults === false) {
-		logToConsole.warning("No results returned.");
+	if ("results" in botAggregatesQueryResults === false) {
+		logToConsole.warning("No bot aggregates returned.");
 		return false;
 	};
 
-	const conversationsBotAggregates = new Map();
+	const botAggregatesConversations = new Map();
 
-	for (const result of queryBotAggregatesResults.results) {
+	for (const result of botAggregatesQueryResults.results) {
 		if ("botIntent" in result.group === false) continue;
 		if ("conversationId" in result.group === false) continue;
 
-		if (conversationsBotAggregates.has(result.group.conversationId) === false) {
-			conversationsBotAggregates.set(result.group.conversationId, new Map());
+		if (botAggregatesConversations.has(result.group.conversationId) === false) {
+			botAggregatesConversations.set(result.group.conversationId, new Map());
 		}
 
-		const conversation = conversationsBotAggregates.get(result.group.conversationId);
+		const conversation = botAggregatesConversations.get(result.group.conversationId);
 
 		if (conversation.has(result.group.botIntent) === false) {
 			conversation.set(result.group.botIntent, 0);
@@ -107,7 +94,7 @@ async function queryBotAggregates() {
 		}
 	}
 
-	for (const [conversationId, conversationIntents] of conversationsBotAggregates) {
+	for (const [conversationId, conversationIntents] of botAggregatesConversations) {
 		console.log(`Conversation ID: ${conversationId}`);
 		const intentsArray = [];
 		for (const [intent, sum] of conversationIntents) {
@@ -117,7 +104,7 @@ async function queryBotAggregates() {
 		console.log();
 	}
 
-	console.log(`Number of conversations: ${conversationsBotAggregates.size}`);
+	console.log(`Number of conversations with bot intents: ${botAggregatesConversations.size}`);
 
 	return true;
 }
