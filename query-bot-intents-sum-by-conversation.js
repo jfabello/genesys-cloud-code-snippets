@@ -59,12 +59,13 @@ async function queryBotAggregates() {
 	} catch (gcError) {
 		logToConsole.error("An error occurred while querying the bot aggreggates.");
 		logToConsole.debug("Genesys Cloud returned error object:\n%O", gcError);
+		return false;
 	}
 
 	if ("results" in botAggregatesQueryResults === false) {
 		logToConsole.warning("No bot aggregates returned.");
 		return false;
-	};
+	}
 
 	const botAggregatesConversations = new Map();
 
