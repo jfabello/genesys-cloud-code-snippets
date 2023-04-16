@@ -8,11 +8,11 @@ const gcPlatformClient = require("purecloud-platform-client-v2");
 const QUERY_START_DATE_ISO_STRING = new Date(Date.now() - constants.DAY_IN_MS * 7).toISOString(); // 7 days ago
 const QUERY_END_DATE_ISO_STRING = new Date().toISOString(); // Right now
 
-// Runs the query conversations details function
-queryConversationsDetails();
+// Runs the conversations details query function
+conversationsDetailsQuery();
 
-// Genesys Cloud query conversations details function
-async function queryConversationsDetails() {
+// Genesys Cloud conversations details query function
+async function conversationsDetailsQuery() {
 	// Check the Genesys Cloud environment variables
 	try {
 		helperFuncs.checkGenesysCloudEnvVars();
