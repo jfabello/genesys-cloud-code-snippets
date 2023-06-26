@@ -67,6 +67,7 @@ async function conversationsDetailsQuery() {
 		} catch (gcError) {
 			logToConsole.error("An error occurred while querying the convresations details.");
 			logToConsole.debug("Genesys Cloud returned error object:\n%O", gcError);
+			return false;
 		}
 
 		if ("conversations" in conversationsDetailsQueryResultsPage === false) {
